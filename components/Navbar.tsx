@@ -9,6 +9,21 @@ import { Dialog, Transition } from "@headlessui/react";
 
 const provider = new GoogleAuthProvider();
 
+const links = [
+  {
+    name: "Study",
+    link: "/study",
+  },
+  {
+    name: "Visualise",
+    link: "/visualise",
+  },
+  {
+    name: "Settings",
+    link: "/settings",
+  },
+];
+
 export default function Navbar() {
   const { user, userLoading } = useContext(AuthContext);
   const router = useRouter();
@@ -52,14 +67,19 @@ export default function Navbar() {
   return (
     <div className="p-4 flex items-center justify-between shadow-md">
       <h1 className="font-bold italic">
-        <Link href={"/"}>Logo</Link>
+        <Link href={"/"}>StudyBuddy</Link>
       </h1>
       <ul className="flex gap-4">
         {!user && <GoogleButton onClick={signinWithGoogle} />}
         {user && (
-          <li className="cursor-pointer" onClick={signout}>
-            Sign Out
-          </li>
+          <>
+            {links.map((link) => (
+              <Link href={link.link}>{link.name}</Link>
+            ))}
+            <li className="cursor-pointer" onClick={signout}>
+              Sign Out
+            </li>
+          </>
         )}
       </ul>
     </div>
