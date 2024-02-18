@@ -157,8 +157,8 @@ export default function Visualise() {
 
       setSubjects(sessionSubjects);
       setChartData(aggregatedData);
-    } else if (selectedTime === "Custom Range") {
-      if (!customDateRange.from || !customDateRange.to) return;
+    } else if (selectedTime === "Custom Range" && customDateRange) {
+      if (!customDateRange?.from || !customDateRange?.to) return;
 
       const customSessions = getSessionsBetweenDates(
         sessions,
@@ -290,13 +290,13 @@ export default function Visualise() {
           </div>
         </div>
         {/* GRAPH STUFF */}
-        {/* TODAY AND YESTERDAY */}
 
+        {/* BAR CHART FOR SINGLE DAYS */}
         {chartData &&
-        (selectedTime === "Today" || selectedTime === "Yesterday") ? (
+        (selectedTime === "Today" ||
+          selectedTime === "Yesterday" ||
+          (selectedTime === "Custom Date" && customDate)) ? (
           <BarChart
-            // showYAxis={false}
-
             data={chartData}
             index="subject"
             categories={["minutes"]}
@@ -308,39 +308,11 @@ export default function Visualise() {
           />
         ) : null}
 
-        {/* RANGE FOR WEEK ETC... */}
+        {/* LINE GRAPH FOR RANGES */}
         {chartData &&
-        (selectedTime === "This Week" || selectedTime === "This Month") ? (
-          <LineChart
-            className="h-80"
-            data={chartData}
-            index="date"
-            categories={subjects}
-            colors={["indigo", "rose"]}
-            valueFormatter={(n) => `${n} min`}
-            yAxisWidth={60}
-            onValueChange={(v) => console.log(v)}
-          />
-        ) : null}
-
-        {/* CUSTOM DATE SELECTED */}
-        {selectedTime === "Custom Date" && customDate && chartData ? (
-          <BarChart
-            // showYAxis={false}
-
-            data={chartData}
-            index="subject"
-            categories={["minutes"]}
-            colors={["blue", "red"]}
-            // valueFormatter={dataFormatter}
-            yAxisWidth={48}
-            onValueChange={(v) => console.log(v)}
-            className=""
-          />
-        ) : null}
-
-        {/* CUSTOM DATE RANGE  SELECTED */}
-        {selectedTime === "Custom Range" && customDateRange && chartData ? (
+        (selectedTime === "This Week" ||
+          selectedTime === "This Month" ||
+          (selectedTime === "Custom Range" && customDateRange)) ? (
           <LineChart
             className="h-80"
             data={chartData}
