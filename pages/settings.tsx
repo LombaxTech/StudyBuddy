@@ -4,8 +4,10 @@ import {
   db,
   // storage
 } from "@/firebase";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getRandomElement } from "@/helperFunctions";
+import { colorNames } from "@/data";
 
 export default function Settings() {
   const { user, setUser } = useContext(AuthContext);
@@ -20,9 +22,13 @@ export default function Settings() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (user) setSubjects(user.subjects);
+  }, [user]);
+
+  useEffect(() => {
     if (!user) return;
 
-    if (user.name !== name) {
+    if (user.name !== name && name !== "") {
       setChangesExist(true);
     } else {
       setChangesExist(false);
@@ -41,6 +47,41 @@ export default function Settings() {
     } catch (error) {
       console.log(error);
       setError(true);
+    }
+  };
+
+  const addSubject = async () => {
+    const subjectAlreadyExists = subjects.filter(
+      (s: any) => s.name === subjectInput
+    ).length;
+
+    try {
+      if (subjectAlreadyExists) return;
+
+      await updateDoc(doc(db, "users", user.uid), {
+        subjects: arrayUnion({
+          name: subjectInput,
+          color: getRandomElement(colorNames),
+        }),
+      });
+
+      setSubjectInput("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeSubject = async (subject: any) => {
+    try {
+      const updatedSubjects = subjects.filter(
+        (s: any) => s.name !== subject.name
+      );
+
+      await updateDoc(doc(db, "users", user.uid), {
+        subjects: updatedSubjects,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -76,17 +117,24 @@ export default function Settings() {
                     <span className="cursor-pointer text-xs">Edit color</span>
                     <button
                       className="btn btn-sm"
-                      //   onClick={() =>
-                      //     setSubjects(
-                      //       subjects.filter((s: any) => s.name !== subject.name)
-                      //     )
-                      //   }
+                      onClick={() => removeSubject(subject)}
                     >
                       Remove
                     </button>
                   </div>
                 );
               })}
+          </div>
+          <div className="flex items center gap-1">
+            <input
+              type="text"
+              className="flex-1 outline-none border-1"
+              value={subjectInput}
+              onChange={(e) => setSubjectInput(e.target.value)}
+            />
+            <button className="btn" onClick={addSubject}>
+              Add Subject
+            </button>
           </div>
           <button
             disabled={!changesExist}

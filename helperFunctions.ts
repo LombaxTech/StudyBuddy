@@ -89,3 +89,14 @@ export function getKeyForMonthYear() {
 export function removeDuplicates(arr: any) {
   return arr.filter((item: any, index: any) => arr.indexOf(item) === index);
 }
+
+export function getRandomColors(n: number, colorNames: string[]): string[] {
+  // Shuffle the array
+  const shuffledColors = colorNames.sort(() => 0.5 - Math.random());
+
+  // Return the first n unique colors
+  return shuffledColors.slice(0, n);
+}
+
+export const getRandomElement = (array: any) =>
+  array[Math.floor(Math.random() * array.length)];
