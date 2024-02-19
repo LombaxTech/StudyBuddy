@@ -8,6 +8,7 @@ import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { getRandomElement } from "@/helperFunctions";
 import { colorNames } from "@/data";
+import { Select, SelectItem } from "@tremor/react";
 
 export default function Settings() {
   const { user, setUser } = useContext(AuthContext);
@@ -20,6 +21,9 @@ export default function Settings() {
   const [changesExist, setChangesExist] = useState(false);
   const [changesSaved, setChangesSaved] = useState(false);
   const [error, setError] = useState(false);
+
+  const [subjectToBeEdited, setSubjectToBeEdited] = useState<any>("");
+  const [color, setColor] = useState("");
 
   useEffect(() => {
     if (user) setSubjects(user.subjects);
@@ -85,6 +89,27 @@ export default function Settings() {
     }
   };
 
+  const updateSubjectColor = async (subject: any) => {
+    try {
+      const updatedSubjects = subjects.map((s: any) => {
+        if (s.name === subject.name) {
+          return {
+            ...s,
+            color,
+          };
+        } else return s;
+      });
+
+      await updateDoc(doc(db, "users", user.uid), {
+        subjects: updatedSubjects,
+      });
+
+      setSubjectToBeEdited("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (user)
     return (
       <div className="p-10 flex flex-col items-center">
@@ -104,6 +129,8 @@ export default function Settings() {
             <label>My subjects: </label>
             {subjects &&
               subjects.map((subject: any) => {
+                const isEditing = subjectToBeEdited === subject.name;
+
                 return (
                   <div className="flex items-center gap-2">
                     <div className="w-3/12">
@@ -114,7 +141,43 @@ export default function Settings() {
                         {subject.name}
                       </span>
                     </div>
-                    <span className="cursor-pointer text-xs">Edit color</span>
+                    <span className="text-xs font-thin">{subject.color}</span>
+                    <span
+                      className="cursor-pointer text-xs"
+                      onClick={() => {
+                        if (isEditing) {
+                          setSubjectToBeEdited("");
+                        } else {
+                          setSubjectToBeEdited(subject.name);
+                        }
+                      }}
+                    >
+                      {isEditing ? "Cancel" : "Edit Color"}
+                    </span>
+                    {isEditing && (
+                      <div className="flex items center gap-2">
+                        <Select
+                          value={color}
+                          onValueChange={setColor}
+                          className="mt-2"
+                        >
+                          {colorNames.map((colorName) => {
+                            return (
+                              <SelectItem value={colorName}>
+                                {colorName}
+                              </SelectItem>
+                            );
+                          })}
+                        </Select>
+                        <button
+                          onClick={() => updateSubjectColor(subject)}
+                          className="btn"
+                          disabled={color === "" || color === subject.color}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    )}
                     <button
                       className="btn btn-sm"
                       onClick={() => removeSubject(subject)}
