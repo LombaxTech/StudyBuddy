@@ -128,11 +128,11 @@ export default function Settings() {
           <div className="flex flex-col gap-2">
             <label>My subjects: </label>
             {subjects &&
-              subjects.map((subject: any) => {
+              subjects.map((subject: any, i: any) => {
                 const isEditing = subjectToBeEdited === subject.name;
 
                 return (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" key={i}>
                     <div className="w-3/12">
                       <span
                         className="p-2 bg-gray-300 rounded-lg text-xs"
@@ -163,7 +163,7 @@ export default function Settings() {
                         >
                           {colorNames.map((colorName) => {
                             return (
-                              <SelectItem value={colorName}>
+                              <SelectItem key={colorName} value={colorName}>
                                 {colorName}
                               </SelectItem>
                             );

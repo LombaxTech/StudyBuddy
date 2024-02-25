@@ -74,7 +74,9 @@ export default function Navbar() {
         {user && (
           <>
             {links.map((link) => (
-              <Link href={link.link}>{link.name}</Link>
+              <Link key={link.link} href={link.link}>
+                {link.name}
+              </Link>
             ))}
             <li className="cursor-pointer" onClick={signout}>
               Sign Out

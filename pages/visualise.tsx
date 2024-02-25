@@ -268,7 +268,9 @@ export default function Visualise() {
                 <SelectItem value={"All"}>All</SelectItem>
                 {user.subjects.map((subject: any) => {
                   return (
-                    <SelectItem value={subject.name}>{subject.name}</SelectItem>
+                    <SelectItem key={subject.name} value={subject.name}>
+                      {subject.name}
+                    </SelectItem>
                   );
                 })}
               </Select>

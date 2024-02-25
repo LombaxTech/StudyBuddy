@@ -112,7 +112,7 @@ export default function Study() {
               Subject
             </option>
             {user.subjects.map((subject: any) => {
-              return <option>{subject.name}</option>;
+              return <option key={subject.name}>{subject.name}</option>;
             })}
           </select>
         </div>

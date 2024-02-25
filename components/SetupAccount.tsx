@@ -103,7 +103,7 @@ export default function SetupAccount() {
           {subjects &&
             subjects.map((subject: any) => {
               return (
-                <div className="flex items-center gap-2">
+                <div key={subject.name} className="flex items-center gap-2">
                   <div className="w-3/12">
                     <span
                       className="p-2 bg-gray-300 rounded-lg text-xs"
