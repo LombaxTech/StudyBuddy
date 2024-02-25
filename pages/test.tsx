@@ -1,74 +1,110 @@
-import { AuthContext } from "@/context/AuthContext";
-import { useStopwatch } from "@/customHooks/useStopwatch";
-import { db } from "@/firebase";
-import { doc, increment, updateDoc } from "firebase/firestore";
-import React, { useContext } from "react";
+import { DatePicker, DateRangePicker, LineChart } from "@tremor/react";
+import { useState } from "react";
 
 export default function Test() {
-  const { user } = useContext(AuthContext);
+  const [val, setVal] = useState<any>(null);
 
-  const {
-    time,
-    isRunning,
-    start,
-    pause,
-    reset,
-    finish,
-    seconds,
-    minutes,
-    hours,
-  } = useStopwatch();
-
-  const saveTime = async () => {
-    console.log(time);
-
-    try {
-      const today = "16-02-24";
-      const subject = "Math";
-
-      await updateDoc(doc(db, "users", user.uid), {
-        [`${today}.${subject}`]: increment(time),
-      });
-
-      console.log("updated!!!!");
-    } catch (error) {
-      console.log(error);
-    }
+  const logStuff = () => {
+    console.log(`val`);
+    console.log(val);
   };
 
   return (
-    <div className="flex justify-center p-10">
-      <div className="flex flex-col gap-2">
-        <button className="btn" onClick={saveTime}>
-          Save
-        </button>
-        <div className="flex justify-center items-center text-4xl tracking-widest font-bold">
-          <span className="">{hours}:</span>
-          <span className="">{minutes}:</span>
-          <span className="">{seconds}</span>
-        </div>
-
-        <div>Time: {time}</div>
-
-        <div>Is Running: {isRunning ? "Yes" : "No"}</div>
-        <button onClick={start} disabled={isRunning}>
-          Start
-        </button>
-        <button onClick={pause} disabled={!isRunning}>
-          Pause
-        </button>
-        <button onClick={reset}>Reset</button>
-        <button
-          onClick={() => {
-            const { hours, minutes, seconds } = finish();
-            console.log(
-              `Study session finished. Time spent: ${hours} hours, ${minutes} minutes, ${seconds} seconds`
-            );
-          }}
-        >
-          Finish
-        </button>
-      </div>
+    <div className="">
+      <h1>hello</h1>
+      <button className="btn" onClick={logStuff}>
+        Log stuff
+      </button>
+      {/* <DatePicker
+        className="mx-auto max-w-sm"
+        /> */}
+      <DateRangePicker
+        enableSelect={false}
+        value={val}
+        onValueChange={setVal}
+      />
     </div>
   );
 }
+
+// const chartdata = [
+//   {
+//     date: "Jan 22",
+//     SemiAnalysis: 2890,
+//     "The Pragmatic Engineer": 2338,
+//   },
+//   {
+//     date: "Feb 22",
+//     SemiAnalysis: 2756,
+//     "The Pragmatic Engineer": 2103,
+//   },
+//   {
+//     date: "Mar 22",
+//     SemiAnalysis: 3322,
+//     "The Pragmatic Engineer": 2194,
+//   },
+//   {
+//     date: "Apr 22",
+//     SemiAnalysis: 3470,
+//     "The Pragmatic Engineer": 2108,
+//   },
+//   {
+//     date: "May 22",
+//     SemiAnalysis: 3475,
+//     "The Pragmatic Engineer": 1812,
+//   },
+//   {
+//     date: "Jun 22",
+//     SemiAnalysis: 3129,
+//     "The Pragmatic Engineer": 1726,
+//   },
+//   {
+//     date: "Jul 22",
+//     SemiAnalysis: 3490,
+//     "The Pragmatic Engineer": 1982,
+//   },
+//   {
+//     date: "Aug 22",
+//     SemiAnalysis: 2903,
+//     "The Pragmatic Engineer": 2012,
+//   },
+//   {
+//     date: "Sep 22",
+//     SemiAnalysis: 2643,
+//     "The Pragmatic Engineer": 2342,
+//   },
+//   {
+//     date: "Oct 22",
+//     SemiAnalysis: 2837,
+//     "The Pragmatic Engineer": 2473,
+//   },
+//   {
+//     date: "Nov 22",
+//     SemiAnalysis: 2954,
+//     "The Pragmatic Engineer": 3848,
+//   },
+//   {
+//     date: "Dec 22",
+//     SemiAnalysis: 3239,
+//     "The Pragmatic Engineer": 3736,
+//   },
+// ];
+
+// const dataFormatter = (number) =>
+//   // `$${Intl.NumberFormat("us").format(number).toString()}`;
+//   `${number} min`;
+
+// export default function Test() {
+//   return (
+//     <LineChart
+//       className="h-80"
+//       data={chartdata}
+//       index="date"
+//       categories={["SemiAnalysis", "The Pragmatic Engineer"]}
+//       colors={["indigo", "rose"]}
+//       valueFormatter={(n) => `${n} min`}
+//       yAxisWidth={60}
+//       onValueChange={(v) => console.log(v)}
+//     />
+//   );
+// }

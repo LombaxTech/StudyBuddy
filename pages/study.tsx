@@ -56,7 +56,7 @@ export default function Study() {
       const dayMonthYear = getKeyForDayMonthYear();
 
       await updateDoc(doc(db, "users", user.uid), {
-        [`${dayMonthYear}.${selectedSubject}`]: increment(time),
+        [`studySessions.${dayMonthYear}.${selectedSubject}`]: increment(time),
       });
 
       setSaveSuccess(true);

@@ -15,11 +15,12 @@ import {
   formatDateToDayMonthYear,
   getKeyForDayMonthYear,
   getKeyForYesterday,
+  getRandomColors,
   getSessionsBetweenDates,
   getSessionsLastSevenDays,
   getSessionsThisMonth,
 } from "@/helperFunctions";
-import { studySessions, sessions } from "@/data";
+import { studySessions, sessions, colorNames } from "@/data";
 
 export default function Visualise() {
   const { user } = useContext(AuthContext);
@@ -32,32 +33,17 @@ export default function Visualise() {
 
   const [chartData, setChartData] = useState<any>(null);
 
+  // const [subjects, setSubjects] = useState<any>(["Math", "Coding", "Y"]);
   const [subjects, setSubjects] = useState<any>([]);
 
+  useEffect(() => {
+    if (user) setSubjects(user?.subjects?.map((subject: any) => subject.name));
+  }, [user]);
+
   const logStuff = () => {
-    console.log(customDateRange);
-    console.log(customDateRange.from);
-    console.log(customDateRange.to);
+    let r = getRandomColors(10, colorNames);
 
-    const customSessions = getSessionsBetweenDates(
-      sessions,
-      customDateRange.from,
-      customDateRange.to
-    );
-    console.log(customSessions);
-
-    return;
-
-    let day = formatDateToDayMonthYear(customDate);
-
-    let daySession = sessions.find((session) => session.date === day);
-    let newChartData = [];
-    for (const subject in daySession?.subjects) {
-      // @ts-ignore
-      let minutes = daySession.subjects[subject];
-      newChartData.push({ subject, minutes });
-    }
-    console.log(newChartData);
+    console.log(r);
   };
 
   useEffect(() => {
@@ -90,7 +76,7 @@ export default function Visualise() {
     } else if (selectedTime === "This Week") {
       const lastSevenDaysData = getSessionsLastSevenDays(sessions);
       const aggregatedData: any[] = [];
-      let sessionSubjects: any = [];
+      // let sessionSubjects: any = [];
 
       lastSevenDaysData.forEach((session) => {
         const [day, month, year] = session.date.split("-").map(Number);
@@ -107,9 +93,9 @@ export default function Visualise() {
 
         // Iterate through each subject in the session
         for (const subjectName in session.subjects) {
-          if (!sessionSubjects.includes(subjectName)) {
-            sessionSubjects.push(subjectName);
-          }
+          // if (!sessionSubjects.includes(subjectName)) {
+          //   sessionSubjects.push(subjectName);
+          // }
           const minutesStudied = session.subjects[subjectName];
 
           // Add the subject name and minutes studied to the data point
@@ -120,7 +106,7 @@ export default function Visualise() {
         aggregatedData.push(dataPoint);
       });
 
-      setSubjects(sessionSubjects);
+      // setSubjects(sessionSubjects);
       setChartData(aggregatedData);
     } else if (selectedTime === "This Month") {
       const thisMonthData = getSessionsThisMonth(sessions);
@@ -300,7 +286,8 @@ export default function Visualise() {
             data={chartData}
             index="subject"
             categories={["minutes"]}
-            colors={["blue", "red"]}
+            // colors={["blue", "red"]}
+            colors={getRandomColors(subjects.length, colorNames)}
             // valueFormatter={dataFormatter}
             yAxisWidth={48}
             onValueChange={(v) => console.log(v)}
@@ -318,7 +305,8 @@ export default function Visualise() {
             data={chartData}
             index="date"
             categories={subjects}
-            colors={["indigo", "rose"]}
+            // colors={["indigo", "sky", "rose"]}
+            colors={getRandomColors(subjects.length, colorNames)}
             valueFormatter={(n) => `${n} min`}
             yAxisWidth={60}
             onValueChange={(v) => console.log(v)}
